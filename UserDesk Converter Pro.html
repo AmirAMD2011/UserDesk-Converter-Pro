@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UserDesk - Unit Converter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #111827;
+            --bg-card: #1e293b;
+            --bg-elevated: #334155;
+            --border-color: #334155;
+            --border-light: #475569;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent: #3b82f6;
+            --accent-light: #60a5fa;
+            --accent-dark: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --purple: #8b5cf6;
+            --pink: #ec4899;
+            --cyan: #06b6d4;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            --gradient-3: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+            --gradient-4: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+        }
+
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 50%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            color: var(--cyan);
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, var(--cyan) 50%, var(--accent-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Categories Grid */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .category-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 20px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .category-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .category-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .category-card.active {
+            background: var(--bg-card);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .category-card.active::before {
+            opacity: 0.15;
+        }
+
+        .category-icon {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 12px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            position: relative;
+            z-index: 1;
+            background: var(--bg-elevated);
+            transition: all 0.3s ease;
+        }
+
+        .category-card.active .category-icon {
+            background: var(--gradient-2);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .category-name {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-name-en {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Main Converter Card */
+        .converter-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: 32px;
+            box-shadow: var(--shadow-xl);
+            margin-bottom: 24px;
+        }
+
+        .converter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .converter-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .converter-title i {
+            font-size: 1.5rem;
+            color: var(--accent-light);
+        }
+
+        .converter-title h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .search-box {
+            position: relative;
+            width: 250px;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 10px 16px 10px 40px;
+            color: var(--text-primary);
+            font-family: 'Vazirmatn', sans-serif;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        /* Converter Inputs */
+        .converter-body {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .input-group {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .input-group:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .input-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-value {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-family: 'Vazirmatn', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            direction: ltr;
+            text-align: right;
+        }
+
+        .input-value:focus {
+            outline: none;
+        }
+
+        .input-value::placeholder {
+            color: var(--text-muted);
+        }
+
+        .unit-select {
+            width: 100%;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-family: 'Vazirmatn', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .unit-select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .swap-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--gradient-2);
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .swap-btn:hover {
+            transform: rotate(180deg) scale(1.1);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.5);
+        }
+
+        /* Formula Display */
+        .formula-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .formula-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius);
+            background: rgba(139, 92, 246, 0.2);
+            color: var(--purple);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .formula-content {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .formula-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .formula-text {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            font-weight: 500;
+            direction: ltr;
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+
+        .copy-btn {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 8px 14px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Vazirmatn', sans-serif;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        /* Quick Conversions */
+        .quick-conversions {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title i {
+            color: var(--accent-light);
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .quick-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .quick-item:hover {
+            border-color: var(--accent);
+            transform: translateX(-4px);
+        }
+
+        .quick-from {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .quick-to {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent-light);
+            direction: ltr;
+        }
+
+        /* History */
+        .history-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: 32px;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .history-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .history-list::-webkit-scrollbar-track {
+            background: var(--bg-card);
+            border-radius: 10px;
+        }
+
+        .history-list::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 10px;
+        }
+
+        .history-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 14px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            animation: slideIn 0.3s ease;
+        }
+
+        .history-item:hover {
+            border-color: var(--border-light);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .history-conversion {
+            font-size: 0.9rem;
+            font-weight: 500;
+            direction: ltr;
+            text-align: right;
+        }
+
+        .history-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .empty-history {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-history i {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 16px 24px;
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(-400px);
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--success);
+            color: white;
+        }
+
+        .toast-message {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .converter-body {
+                grid-template-columns: 1fr;
+            }
+
+            .swap-btn {
+                margin: 0 auto;
+                transform: rotate(90deg);
+            }
+
+            .swap-btn:hover {
+                transform: rotate(270deg) scale(1.1);
+            }
+
+            .converter-card, .history-card {
+                padding: 20px;
+            }
+
+            .input-value {
+                font-size: 1.5rem;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .categories-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+
+            .category-card {
+                padding: 14px 10px;
+            }
+
+            .category-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <div class="container">
+        <header class="header">
+            <div class="header-badge">
+                <i class="fas fa-exchange-alt"></i>
+                <span>UserDesk Converter Pro</span>
+            </div>
+            <h1>مبدل واحدها</h1>
+            <p>تبدیل سریع و دقیق بین واحدهای مختلف اندازه‌گیری</p>
+        </header>
+
+        <!-- Categories -->
+        <div class="categories-grid" id="categoriesGrid"></div>
+
+        <!-- Converter -->
+        <div class="converter-card">
+            <div class="converter-header">
+                <div class="converter-title">
+                    <i class="fas fa-ruler-combined"></i>
+                    <h2 id="currentCategoryTitle">طول</h2>
+                </div>
+                <div class="search-box">
+                    <input type="text" id="unitSearch" placeholder="جستجوی واحد...">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+
+            <div class="converter-body">
+                <div class="input-group">
+                    <div class="input-label">از</div>
+                    <input type="number" id="fromValue" class="input-value" placeholder="0" step="any">
+                    <select id="fromUnit" class="unit-select"></select>
+                </div>
+
+                <button class="swap-btn" id="swapBtn" title="جابجایی">
+                    <i class="fas fa-exchange-alt"></i>
+                </button>
+
+                <div class="input-group">
+                    <div class="input-label">به</div>
+                    <input type="number" id="toValue" class="input-value" placeholder="0" step="any" readonly>
+                    <select id="toUnit" class="unit-select"></select>
+                </div>
+            </div>
+
+            <div class="formula-box">
+                <div class="formula-icon">
+                    <i class="fas fa-function"></i>
+                </div>
+                <div class="formula-content">
+                    <div class="formula-label">فرمول تبدیل</div>
+                    <div class="formula-text" id="formulaText">1 متر = 100 سانتی‌متر</div>
+                </div>
+                <button class="copy-btn" id="copyBtn">
+                    <i class="fas fa-copy"></i>
+                    کپی
+                </button>
+            </div>
+
+            <div class="quick-conversions">
+                <div class="section-title">
+                    <i class="fas fa-bolt"></i>
+                    تبدیل‌های سریع
+                </div>
+                <div class="quick-grid" id="quickGrid"></div>
+            </div>
+        </div>
+
+        <!-- History -->
+        <div class="history-card">
+            <div class="history-header">
+                <div class="converter-title">
+                    <i class="fas fa-history"></i>
+                    <h2>تاریخچه تبدیل‌ها</h2>
+                </div>
+                <button class="copy-btn" id="clearHistoryBtn">
+                    <i class="fas fa-trash"></i>
+                    پاک کردن تاریخچه
+                </button>
+            </div>
+            <div class="history-list" id="historyList">
+                <div class="empty-history">
+                    <i class="fas fa-inbox"></i>
+                    <p>هنوز تبدیلی انجام نشده است</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">
+        <div class="toast-icon">
+            <i class="fas fa-check"></i>
+        </div>
+        <span class="toast-message" id="toastMessage">عملیات با موفقیت انجام شد</span>
+    </div>
+
+    <script>
+        // Unit definitions with conversion factors to base unit
+        const unitsData = {
+            length: {
+                name: 'طول',
+                nameEn: 'Length',
+                icon: 'fa-ruler',
+                base: 'meter',
+                units: {
+                    meter: { name: 'متر', nameEn: 'Meter', factor: 1, symbol: 'm' },
+                    kilometer: { name: 'کیلومتر', nameEn: 'Kilometer', factor: 1000, symbol: 'km' },
+                    centimeter: { name: 'سانتی‌متر', nameEn: 'Centimeter', factor: 0.01, symbol: 'cm' },
+                    millimeter: { name: 'میلی‌متر', nameEn: 'Millimeter', factor: 0.001, symbol: 'mm' },
+                    micrometer: { name: 'میکرومتر', nameEn: 'Micrometer', factor: 1e-6, symbol: 'μm' },
+                    nanometer: { name: 'نانومتر', nameEn: 'Nanometer', factor: 1e-9, symbol: 'nm' },
+                    mile: { name: 'مایل', nameEn: 'Mile', factor: 1609.344, symbol: 'mi' },
+                    yard: { name: 'یارد', nameEn: 'Yard', factor: 0.9144, symbol: 'yd' },
+                    foot: { name: 'فوت', nameEn: 'Foot', factor: 0.3048, symbol: 'ft' },
+                    inch: { name: 'اینچ', nameEn: 'Inch', factor: 0.0254, symbol: 'in' },
+                    nauticalMile: { name: 'مایل دریایی', nameEn: 'Nautical Mile', factor: 1852, symbol: 'nmi' }
+                }
+            },
+            weight: {
+                name: 'وزن',
+                nameEn: 'Weight',
+                icon: 'fa-weight-hanging',
+                base: 'kilogram',
+                units: {
+                    kilogram: { name: 'کیلوگرم', nameEn: 'Kilogram', factor: 1, symbol: 'kg' },
+                    gram: { name: 'گرم', nameEn: 'Gram', factor: 0.001, symbol: 'g' },
+                    milligram: { name: 'میلی‌گرم', nameEn: 'Milligram', factor: 1e-6, symbol: 'mg' },
+                    microgram: { name: 'میکروگرم', nameEn: 'Microgram', factor: 1e-9, symbol: 'μg' },
+                    ton: { name: 'تن', nameEn: 'Ton', factor: 1000, symbol: 't' },
+                    pound: { name: 'پوند', nameEn: 'Pound', factor: 0.453592, symbol: 'lb' },
+                    ounce: { name: 'اونس', nameEn: 'Ounce', factor: 0.0283495, symbol: 'oz' },
+                    stone: { name: 'استون', nameEn: 'Stone', factor: 6.35029, symbol: 'st' },
+                    carat: { name: 'قیراط', nameEn: 'Carat', factor: 0.0002, symbol: 'ct' }
+                }
+            },
+            temperature: {
+                name: 'دما',
+                nameEn: 'Temperature',
+                icon: 'fa-temperature-half',
+                base: 'celsius',
+                special: true,
+                units: {
+                    celsius: { name: 'سلسیوس', nameEn: 'Celsius', symbol: '°C' },
+                    fahrenheit: { name: 'فارنهایت', nameEn: 'Fahrenheit', symbol: '°F' },
+                    kelvin: { name: 'کلوین', nameEn: 'Kelvin', symbol: 'K' }
+                }
+            },
+            volume: {
+                name: 'حجم',
+                nameEn: 'Volume',
+                icon: 'fa-flask',
+                base: 'liter',
+                units: {
+                    liter: { name: 'لیتر', nameEn: 'Liter', factor: 1, symbol: 'L' },
+                    milliliter: { name: 'میلی‌لیتر', nameEn: 'Milliliter', factor: 0.001, symbol: 'mL' },
+                    cubicMeter: { name: 'متر مکعب', nameEn: 'Cubic Meter', factor: 1000, symbol: 'm³' },
+                    gallon: { name: 'گالن (US)', nameEn: 'Gallon (US)', factor: 3.78541, symbol: 'gal' },
+                    quart: { name: 'کوارت', nameEn: 'Quart', factor: 0.946353, symbol: 'qt' },
+                    pint: { name: 'پینت', nameEn: 'Pint', factor: 0.473176, symbol: 'pt' },
+                    cup: { name: 'پیمانه', nameEn: 'Cup', factor: 0.24, symbol: 'cup' },
+                    fluidOunce: { name: 'اونس مایع', nameEn: 'Fluid Ounce', factor: 0.0295735, symbol: 'fl oz' },
+                    tablespoon: { name: 'قاشق غذاخوری', nameEn: 'Tablespoon', factor: 0.015, symbol: 'tbsp' },
+                    teaspoon: { name: 'قاشق چایخوری', nameEn: 'Teaspoon', factor: 0.005, symbol: 'tsp' }
+                }
+            },
+            area: {
+                name: 'مساحت',
+                nameEn: 'Area',
+                icon: 'fa-vector-square',
+                base: 'squareMeter',
+                units: {
+                    squareMeter: { name: 'متر مربع', nameEn: 'Square Meter', factor: 1, symbol: 'm²' },
+                    squareKilometer: { name: 'کیلومتر مربع', nameEn: 'Square Kilometer', factor: 1e6, symbol: 'km²' },
+                    squareCentimeter: { name: 'سانتی‌متر مربع', nameEn: 'Square Centimeter', factor: 1e-4, symbol: 'cm²' },
+                    squareMillimeter: { name: 'میلی‌متر مربع', nameEn: 'Square Millimeter', factor: 1e-6, symbol: 'mm²' },
+                    hectare: { name: 'هکتار', nameEn: 'Hectare', factor: 10000, symbol: 'ha' },
+                    acre: { name: 'ایکر', nameEn: 'Acre', factor: 4046.86, symbol: 'ac' },
+                    squareMile: { name: 'مایل مربع', nameEn: 'Square Mile', factor: 2.59e6, symbol: 'mi²' },
+                    squareYard: { name: 'یارد مربع', nameEn: 'Square Yard', factor: 0.836127, symbol: 'yd²' },
+                    squareFoot: { name: 'فوت مربع', nameEn: 'Square Foot', factor: 0.092903, symbol: 'ft²' },
+                    squareInch: { name: 'اینچ مربع', nameEn: 'Square Inch', factor: 6.4516e-4, symbol: 'in²' }
+                }
+            },
+            speed: {
+                name: 'سرعت',
+                nameEn: 'Speed',
+                icon: 'fa-gauge-high',
+                base: 'meterPerSecond',
+                units: {
+                    meterPerSecond: { name: 'متر بر ثانیه', nameEn: 'Meter/Second', factor: 1, symbol: 'm/s' },
+                    kilometerPerHour: { name: 'کیلومتر بر ساعت', nameEn: 'Kilometer/Hour', factor: 0.277778, symbol: 'km/h' },
+                    milePerHour: { name: 'مایل بر ساعت', nameEn: 'Mile/Hour', factor: 0.44704, symbol: 'mph' },
+                    knot: { name: 'نات', nameEn: 'Knot', factor: 0.514444, symbol: 'kn' },
+                    footPerSecond: { name: 'فوت بر ثانیه', nameEn: 'Foot/Second', factor: 0.3048, symbol: 'ft/s' },
+                    mach: { name: 'ماخ', nameEn: 'Mach', factor: 343, symbol: 'Ma' },
+                    speedOfLight: { name: 'سرعت نور', nameEn: 'Speed of Light', factor: 299792458, symbol: 'c' }
+                }
+            },
+            time: {
+                name: 'زمان',
+                nameEn: 'Time',
+                icon: 'fa-clock',
+                base: 'second',
+                units: {
+                    second: { name: 'ثانیه', nameEn: 'Second', factor: 1, symbol: 's' },
+                    millisecond: { name: 'میلی‌ثانیه', nameEn: 'Millisecond', factor: 0.001, symbol: 'ms' },
+                    microsecond: { name: 'میکروثانیه', nameEn: 'Microsecond', factor: 1e-6, symbol: 'μs' },
+                    minute: { name: 'دقیقه', nameEn: 'Minute', factor: 60, symbol: 'min' },
+                    hour: { name: 'ساعت', nameEn: 'Hour', factor: 3600, symbol: 'h' },
+                    day: { name: 'روز', nameEn: 'Day', factor: 86400, symbol: 'd' },
+                    week: { name: 'هفته', nameEn: 'Week', factor: 604800, symbol: 'wk' },
+                    month: { name: 'ماه', nameEn: 'Month', factor: 2.628e6, symbol: 'mo' },
+                    year: { name: 'سال', nameEn: 'Year', factor: 3.154e7, symbol: 'yr' }
+                }
+            },
+            data: {
+                name: 'داده',
+                nameEn: 'Data',
+                icon: 'fa-database',
+                base: 'byte',
+                units: {
+                    bit: { name: 'بیت', nameEn: 'Bit', factor: 0.125, symbol: 'b' },
+                    byte: { name: 'بایت', nameEn: 'Byte', factor: 1, symbol: 'B' },
+                    kilobyte: { name: 'کیلوبایت', nameEn: 'Kilobyte', factor: 1024, symbol: 'KB' },
+                    megabyte: { name: 'مگابایت', nameEn: 'Megabyte', factor: 1048576, symbol: 'MB' },
+                    gigabyte: { name: 'گیگابایت', nameEn: 'Gigabyte', factor: 1073741824, symbol: 'GB' },
+                    terabyte: { name: 'ترابایت', nameEn: 'Terabyte', factor: 1099511627776, symbol: 'TB' },
+                    petabyte: { name: 'پتابایت', nameEn: 'Petabyte', factor: 1.1259e15, symbol: 'PB' }
+                }
+            },
+            energy: {
+                name: 'انرژی',
+                nameEn: 'Energy',
+                icon: 'fa-bolt',
+                base: 'joule',
+                units: {
+                    joule: { name: 'ژول', nameEn: 'Joule', factor: 1, symbol: 'J' },
+                    kilojoule: { name: 'کیلوژول', nameEn: 'Kilojoule', factor: 1000, symbol: 'kJ' },
+                    calorie: { name: 'کالری', nameEn: 'Calorie', factor: 4.184, symbol: 'cal' },
+                    kilocalorie: { name: 'کیلوکالری', nameEn: 'Kilocalorie', factor: 4184, symbol: 'kcal' },
+                    wattHour: { name: 'وات‌ساعت', nameEn: 'Watt Hour', factor: 3600, symbol: 'Wh' },
+                    kilowattHour: { name: 'کیلووات‌ساعت', nameEn: 'Kilowatt Hour', factor: 3.6e6, symbol: 'kWh' },
+                    electronvolt: { name: 'الکترون‌ولت', nameEn: 'Electronvolt', factor: 1.602e-19, symbol: 'eV' },
+                    btu: { name: 'BTU', nameEn: 'BTU', factor: 1055.06, symbol: 'BTU' }
+                }
+            },
+            pressure: {
+                name: 'فشار',
+                nameEn: 'Pressure',
+                icon: 'fa-gauge',
+                base: 'pascal',
+                units: {
+                    pascal: { name: 'پاسکال', nameEn: 'Pascal', factor: 1, symbol: 'Pa' },
+                    kilopascal: { name: 'کیلوپاسکال', nameEn: 'Kilopascal', factor: 1000, symbol: 'kPa' },
+                    bar: { name: 'بار', nameEn: 'Bar', factor: 100000, symbol: 'bar' },
+                    atmosphere: { name: 'اتمسفر', nameEn: 'Atmosphere', factor: 101325, symbol: 'atm' },
+                    psi: { name: 'PSI', nameEn: 'PSI', factor: 6894.76, symbol: 'psi' },
+                    torr: { name: 'تور', nameEn: 'Torr', factor: 133.322, symbol: 'Torr' },
+                    mmHg: { name: 'میلی‌متر جیوه', nameEn: 'mmHg', factor: 133.322, symbol: 'mmHg' }
+                }
+            },
+            angle: {
+                name: 'زاویه',
+                nameEn: 'Angle',
+                icon: 'fa-compass',
+                base: 'degree',
+                units: {
+                    degree: { name: 'درجه', nameEn: 'Degree', factor: 1, symbol: '°' },
+                    radian: { name: 'رادیان', nameEn: 'Radian', factor: 57.2958, symbol: 'rad' },
+                    gradian: { name: 'گرادیان', nameEn: 'Gradian', factor: 0.9, symbol: 'gon' },
+                    arcminute: { name: 'دقیقه قوسی', nameEn: 'Arcminute', factor: 1/60, symbol: "'" },
+                    arcsecond: { name: 'ثانیه قوسی', nameEn: 'Arcsecond', factor: 1/3600, symbol: '"' }
+                }
+            },
+            frequency: {
+                name: 'فرکانس',
+                nameEn: 'Frequency',
+                icon: 'fa-wave-square',
+                base: 'hertz',
+                units: {
+                    hertz: { name: 'هرتز', nameEn: 'Hertz', factor: 1, symbol: 'Hz' },
+                    kilohertz: { name: 'کیلوهرتز', nameEn: 'Kilohertz', factor: 1000, symbol: 'kHz' },
+                    megahertz: { name: 'مگاهرتز', nameEn: 'Megahertz', factor: 1e6, symbol: 'MHz' },
+                    gigahertz: { name: 'گیگاهرتز', nameEn: 'Gigahertz', factor: 1e9, symbol: 'GHz' }
+                }
+            }
+        };
+
+        class UnitConverter {
+            constructor() {
+                this.currentCategory = 'length';
+                this.history = this.loadHistory();
+                this.init();
+            }
+
+            init() {
+                this.renderCategories();
+                this.setupEventListeners();
+                this.loadCategory(this.currentCategory);
+                this.renderHistory();
+            }
+
+            renderCategories() {
+                const grid = document.getElementById('categoriesGrid');
+                grid.innerHTML = Object.entries(unitsData).map(([key, cat]) => `
+                    <div class="category-card ${key === this.currentCategory ? 'active' : ''}" data-category="${key}">
+                        <div class="category-icon">
+                            <i class="fas ${cat.icon}"></i>
+                        </div>
+                        <div class="category-name">${cat.name}</div>
+                        <div class="category-name-en">${cat.nameEn}</div>
+                    </div>
+                `).join('');
+            }
+
+            setupEventListeners() {
+                document.getElementById('categoriesGrid').addEventListener('click', (e) => {
+                    const card = e.target.closest('.category-card');
+                    if (card) {
+                        this.loadCategory(card.dataset.category);
+                    }
+                });
+
+                document.getElementById('fromValue').addEventListener('input', () => this.convert());
+                document.getElementById('fromUnit').addEventListener('change', () => this.convert());
+                document.getElementById('toUnit').addEventListener('change', () => this.convert());
+
+                document.getElementById('swapBtn').addEventListener('click', () => this.swapUnits());
+                document.getElementById('copyBtn').addEventListener('click', () => this.copyResult());
+                document.getElementById('clearHistoryBtn').addEventListener('click', () => this.clearHistory());
+
+                document.getElementById('unitSearch').addEventListener('input', (e) => {
+                    this.filterUnits(e.target.value);
+                });
+            }
+
+            loadCategory(categoryKey) {
+                this.currentCategory = categoryKey;
+                const category = unitsData[categoryKey];
+
+                document.querySelectorAll('.category-card').forEach(card => {
+                    card.classList.toggle('active', card.dataset.category === categoryKey);
+                });
+
+                document.getElementById('currentCategoryTitle').textContent = category.name;
+
+                const fromSelect = document.getElementById('fromUnit');
+                const toSelect = document.getElementById('toUnit');
+                const unitKeys = Object.keys(category.units);
+
+                fromSelect.innerHTML = unitKeys.map((key, i) => 
+                    `<option value="${key}" ${i === 0 ? 'selected' : ''}>${category.units[key].name} (${category.units[key].symbol})</option>`
+                ).join('');
+
+                toSelect.innerHTML = unitKeys.map((key, i) => 
+                    `<option value="${key}" ${i === 1 ? 'selected' : ''}>${category.units[key].name} (${category.units[key].symbol})</option>`
+                ).join('');
+
+                document.getElementById('fromValue').value = '';
+                document.getElementById('toValue').value = '';
+                document.getElementById('unitSearch').value = '';
+
+                this.updateFormula();
+                this.renderQuickConversions();
+            }
+
+            convert() {
+                const fromValue = parseFloat(document.getElementById('fromValue').value);
+                const fromUnit = document.getElementById('fromUnit').value;
+                const toUnit = document.getElementById('toUnit').value;
+                const category = unitsData[this.currentCategory];
+
+                if (isNaN(fromValue)) {
+                    document.getElementById('toValue').value = '';
+                    this.updateFormula();
+                    return;
+                }
+
+                let result;
+                if (category.special && this.currentCategory === 'temperature') {
+                    result = this.convertTemperature(fromValue, fromUnit, toUnit);
+                } else {
+                    const fromFactor = category.units[fromUnit].factor;
+                    const toFactor = category.units[toUnit].factor;
+                    const baseValue = fromValue * fromFactor;
+                    result = baseValue / toFactor;
+                }
+
+                document.getElementById('toValue').value = this.formatNumber(result);
+                this.updateFormula();
+                this.addToHistory(fromValue, fromUnit, result, toUnit);
+            }
+
+            convertTemperature(value, from, to) {
+                let celsius;
+                // Convert to Celsius first
+                switch (from) {
+                    case 'celsius': celsius = value; break;
+                    case 'fahrenheit': celsius = (value - 32) * 5/9; break;
+                    case 'kelvin': celsius = value - 273.15; break;
+                }
+                // Convert from Celsius to target
+                switch (to) {
+                    case 'celsius': return celsius;
+                    case 'fahrenheit': return celsius * 9/5 + 32;
+                    case 'kelvin': return celsius + 273.15;
+                }
+            }
+
+            formatNumber(num) {
+                if (Math.abs(num) < 0.000001 || Math.abs(num) > 1e15) {
+                    return num.toExponential(6);
+                }
+                return parseFloat(num.toPrecision(10)).toString();
+            }
+
+            updateFormula() {
+                const fromUnit = document.getElementById('fromUnit').value;
+                const toUnit = document.getElementById('toUnit').value;
+                const category = unitsData[this.currentCategory];
+                const from = category.units[fromUnit];
+                const to = category.units[toUnit];
+
+                let formulaText;
+                if (category.special && this.currentCategory === 'temperature') {
+                    const formulas = {
+                        'celsius-fahrenheit': '°F = (°C × 9/5) + 32',
+                        'celsius-kelvin': 'K = °C + 273.15',
+                        'fahrenheit-celsius': '°C = (°F - 32) × 5/9',
+                        'fahrenheit-kelvin': 'K = (°F - 32) × 5/9 + 273.15',
+                        'kelvin-celsius': '°C = K - 273.15',
+                        'kelvin-fahrenheit': '°F = (K - 273.15) × 9/5 + 32'
+                    };
+                    formulaText = formulas[`${fromUnit}-${toUnit}`] || '';
+                } else {
+                    const ratio = from.factor / to.factor;
+                    formulaText = `1 ${from.symbol} = ${this.formatNumber(ratio)} ${to.symbol}`;
+                }
+
+                document.getElementById('formulaText').textContent = formulaText;
+            }
+
+            swapUnits() {
+                const fromSelect = document.getElementById('fromUnit');
+                const toSelect = document.getElementById('toUnit');
+                const fromValue = document.getElementById('fromValue');
+                const toValue = document.getElementById('toValue');
+
+                const tempUnit = fromSelect.value;
+                fromSelect.value = toSelect.value;
+                toSelect.value = tempUnit;
+
+                const tempValue = fromValue.value;
+                fromValue.value = toValue.value;
+                toValue.value = tempValue;
+
+                this.convert();
+                this.showToast('واحدها جابجا شدند');
+            }
+
+            filterUnits(query) {
+                const lowerQuery = query.toLowerCase();
+                const category = unitsData[this.currentCategory];
+                const fromSelect = document.getElementById('fromUnit');
+                const toSelect = document.getElementById('toUnit');
+
+                const filteredUnits = Object.entries(category.units)
+                    .filter(([key, unit]) => 
+                        unit.name.includes(query) || 
+                        unit.nameEn.toLowerCase().includes(lowerQuery) ||
+                        unit.symbol.toLowerCase().includes(lowerQuery)
+                    );
+
+                const currentFrom = fromSelect.value;
+                const currentTo = toSelect.value;
+
+                fromSelect.innerHTML = filteredUnits.map(([key, unit]) => 
+                    `<option value="${key}">${unit.name} (${unit.symbol})</option>`
+                ).join('');
+
+                toSelect.innerHTML = filteredUnits.map(([key, unit]) => 
+                    `<option value="${key}">${unit.name} (${unit.symbol})</option>`
+                ).join('');
+
+                if (filteredUnits.find(([key]) => key === currentFrom)) fromSelect.value = currentFrom;
+                if (filteredUnits.find(([key]) => key === currentTo)) toSelect.value = currentTo;
+            }
+
+            renderQuickConversions() {
+                const category = unitsData[this.currentCategory];
+                const unitKeys = Object.keys(category.units);
+                const fromValue = parseFloat(document.getElementById('fromValue').value) || 1;
+                const fromUnit = document.getElementById('fromUnit').value;
+
+                const grid = document.getElementById('quickGrid');
+                const conversions = unitKeys
+                    .filter(key => key !== fromUnit)
+                    .slice(0, 6)
+                    .map(key => {
+                        let result;
+                        if (category.special && this.currentCategory === 'temperature') {
+                            result = this.convertTemperature(fromValue, fromUnit, key);
+                        } else {
+                            const baseValue = fromValue * category.units[fromUnit].factor;
+                            result = baseValue / category.units[key].factor;
+                        }
+                        return {
+                            to: key,
+                            result: this.formatNumber(result)
+                        };
+                    });
+
+                grid.innerHTML = conversions.map(c => `
+                    <div class="quick-item">
+                        <span class="quick-from">${category.units[fromUnit].symbol}</span>
+                        <span class="quick-to">${c.result} ${category.units[c.to].symbol}</span>
+                    </div>
+                `).join('');
+            }
+
+            addToHistory(fromValue, fromUnit, toValue, toUnit) {
+                const category = unitsData[this.currentCategory];
+                const entry = {
+                    id: Date.now(),
+                    category: this.currentCategory,
+                    fromValue,
+                    fromUnit,
+                    toValue,
+                    toUnit,
+                    timestamp: new Date().toISOString()
+                };
+
+                this.history.unshift(entry);
+                if (this.history.length > 20) this.history.pop();
+                
+                this.saveHistory();
+                this.renderHistory();
+            }
+
+            renderHistory() {
+                const list = document.getElementById('historyList');
+                
+                if (this.history.length === 0) {
+                    list.innerHTML = `
+                        <div class="empty-history">
+                            <i class="fas fa-inbox"></i>
+                            <p>هنوز تبدیلی انجام نشده است</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                list.innerHTML = this.history.map(entry => {
+                    const category = unitsData[entry.category];
+                    const from = category.units[entry.fromUnit];
+                    const to = category.units[entry.toUnit];
+                    const time = this.formatTime(entry.timestamp);
+                    
+                    return `
+                        <div class="history-item">
+                            <div class="history-conversion">
+                                ${this.formatNumber(entry.fromValue)} ${from.symbol} = ${this.formatNumber(entry.toValue)} ${to.symbol}
+                            </div>
+                            <div class="history-time">${time}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            formatTime(timestamp) {
+                const date = new Date(timestamp);
+                const now = new Date();
+                const diff = now - date;
+                const minutes = Math.floor(diff / 60000);
+                
+                if (minutes < 1) return 'همین الان';
+                if (minutes < 60) return `${minutes} دقیقه پیش`;
+                if (minutes < 1440) return `${Math.floor(minutes/60)} ساعت پیش`;
+                return date.toLocaleDateString('fa-IR');
+            }
+
+            clearHistory() {
+                if (this.history.length === 0) {
+                    this.showToast('تاریخچه خالی است');
+                    return;
+                }
+                this.history = [];
+                this.saveHistory();
+                this.renderHistory();
+                this.showToast('تاریخچه پاک شد');
+            }
+
+            copyResult() {
+                const toValue = document.getElementById('toValue').value;
+                const toUnit = document.getElementById('toUnit').value;
+                const category = unitsData[this.currentCategory];
+                const text = `${toValue} ${category.units[toUnit].symbol}`;
+
+                navigator.clipboard.writeText(text).then(() => {
+                    this.showToast('نتیجه کپی شد');
+                }).catch(() => {
+                    this.showToast('خطا در کپی', 'error');
+                });
+            }
+
+            loadHistory() {
+                const saved = localStorage.getItem('userDeskConverterHistory');
+                return saved ? JSON.parse(saved) : [];
+            }
+
+            saveHistory() {
+                localStorage.setItem('userDeskConverterHistory', JSON.stringify(this.history));
+            }
+
+            showToast(message, type = 'success') {
+                const toast = document.getElementById('toast');
+                const toastMessage = document.getElementById('toastMessage');
+                const toastIcon = toast.querySelector('.toast-icon');
+                
+                toastMessage.textContent = message;
+                
+                if (type === 'error') {
+                    toastIcon.style.background = 'var(--danger)';
+                    toastIcon.innerHTML = '<i class="fas fa-exclamation"></i>';
+                } else {
+                    toastIcon.style.background = 'var(--success)';
+                    toastIcon.innerHTML = '<i class="fas fa-check"></i>';
+                }
+
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new UnitConverter();
+        });
+    </script>
+</body>
+</html>
